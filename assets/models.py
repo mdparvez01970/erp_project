@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from datetime import date
 
 class Asset(models.Model):
     name = models.CharField(max_length=100)
