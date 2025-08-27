@@ -57,6 +57,12 @@ class AccountHeadSerializer(serializers.ModelSerializer):
         return data
 
 class GeneralLedgerSerializer(serializers.ModelSerializer):
+    account = AccountHeadSerializer(read_only=True)
+    account_id = serializers.PrimaryKeyRelatedField(
+        queryset=AccountHead.objects.all(),
+        source="account",
+        write_only=True
+    )
     class Meta:
         model = GeneralLedger
         fields = "__all__"

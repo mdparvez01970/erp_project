@@ -13,12 +13,17 @@ class Employee(models.Model):
         return self.user.username
 
 class Payslip(models.Model):
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
-    month = models.DateField()
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, db_index=True)
+    month = models.DateField(db_index=True)
     basic = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     allowance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     deduction = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     net_salary = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['employee', 'month']),
+        ]
 
     def __str__(self):
         return f"{self.employee.user.username} - {self.month}"

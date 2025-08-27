@@ -8,8 +8,11 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import RegisterSerializer
+from django.db.models import Sum
+from rest_framework.decorators import action
+from .utils import get_account_report
 
-    # Sign Up
+# Sign Up
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
@@ -44,6 +47,13 @@ class LogoutView(APIView):
             return Response({"success": False, "error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class AccountReportAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        report = get_account_report()
+        return Response(report)
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -70,10 +80,26 @@ class AccountHeadViewSet(viewsets.ModelViewSet):
             return super().create(request, *args, **kwargs)
         except Exception as e:
             return Response({"success": False, "error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=['get'])
+    def report(self, request):
+        accounts = AccountHead.objects.prefetch_related('generalledger_set').all()
+        report_data = []
+        for account in accounts:
+            total_debit = account.generalledger_set.aggregate(total=Sum('debit'))['total'] or 0
+            total_credit = account.generalledger_set.aggregate(total=Sum('credit'))['total'] or 0
+            report_data.append({
+                'account_code': account.code,
+                'account_name': account.name,
+                'account_type': account.type,
+                'total_debit': total_debit,
+                'total_credit': total_credit
+            })
+        return Response(report_data)
 
 
 class GeneralLedgerViewSet(viewsets.ModelViewSet):
-    queryset = GeneralLedger.objects.all()
+    queryset = GeneralLedger.objects.all().order_by("-date")
     serializer_class = GeneralLedgerSerializer
     permission_classes = [permissions.IsAuthenticated]
     
@@ -90,3 +116,21 @@ class GeneralLedgerViewSet(viewsets.ModelViewSet):
                 "success": False,
                 "error": str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
+            
+    @action(detail=False, methods=['get'])
+    def report(self, request):
+        accounts = AccountHead.objects.prefetch_related('generalledger_set').all()
+        report_data = []
+
+        for account in accounts:
+            total_debit = account.generalledger_set.aggregate(total=Sum('debit'))['total'] or 0
+            total_credit = account.generalledger_set.aggregate(total=Sum('credit'))['total'] or 0
+            report_data.append({
+                'account_code': account.code,
+                'account_name': account.name,
+                'account_type': account.type,
+                'total_debit': total_debit,
+                'total_credit': total_credit
+            })
+
+        return Response(report_data)

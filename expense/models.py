@@ -9,10 +9,10 @@ class Expense(models.Model):
         ('utilities', 'Utilities'),
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1)
-    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, db_index=True)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
-    description = models.TextField(blank=True)
-    date = models.DateField()
+    description = models.TextField(blank=True, null=True)
+    date = models.DateField(db_index=True)
     receipt = models.FileField(upload_to='receipts/', blank=True, null=True)
 
     def __str__(self):

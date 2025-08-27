@@ -1,8 +1,18 @@
 from rest_framework import status, viewsets, permissions, filters
+from rest_framework.views import APIView
 from .models import Currency
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .serializers import CurrencySerializer
+from .utils import get_currency_rates
 from django_filters.rest_framework import DjangoFilterBackend
+
+class CurrencyRatesAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        rates = get_currency_rates()
+        return Response(rates)
 
 class CurrencyViewSet(viewsets.ModelViewSet):
     queryset = Currency.objects.all()

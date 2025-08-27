@@ -1,8 +1,12 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
-from .views import CurrencyViewSet
+from .views import CurrencyViewSet, CurrencyRatesAPIView
 
 router = DefaultRouter()
 router.register(r'currencies', CurrencyViewSet)
 
-urlpatterns = [path('', include(router.urls))]
+urlpatterns = [
+    path('rates/', CurrencyRatesAPIView.as_view(), name='currency-rates'),
+    
+    path('', include(router.urls))
+    ]

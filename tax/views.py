@@ -1,8 +1,18 @@
 from rest_framework import viewsets, permissions, filters, status
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import TaxRule
+from rest_framework.permissions import IsAuthenticated
 from .serializers import TaxRuleSerializer
+from .utils import get_tax_config
 from django_filters.rest_framework import DjangoFilterBackend
+
+class TaxConfigAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        config = get_tax_config()
+        return Response(config)
 
 class TaxRuleViewSet(viewsets.ModelViewSet):
     queryset = TaxRule.objects.all()
