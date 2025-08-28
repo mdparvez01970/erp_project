@@ -198,3 +198,16 @@ Traceback (most recent call last):
 redis.exceptions.ConnectionError: Error 10061 connecting to 127.0.0.1:6379. No connection could be made because the target machine actively refused it.
 [2025-08-27 22:24:48,794] ERROR in basehttp: "POST /admin/login/?next=/admin/ HTTP/1.1" 500 224602
 [2025-08-27 22:24:48,794] ERROR in basehttp: "POST /admin/login/?next=/admin/ HTTP/1.1" 500 224602
+[2025-08-27 23:20:55,460] ERROR in exceptions: [TokenObtainPairView] MethodNotAllowed: {'detail': ErrorDetail(string='Method "GET" not allowed.', code='method_not_allowed')}
+[2025-08-27 23:25:39,178] ERROR in exceptions: [TokenRefreshView] MethodNotAllowed: {'detail': ErrorDetail(string='Method "GET" not allowed.', code='method_not_allowed')}
+[2025-08-27 23:25:42,000] ERROR in exceptions: [TokenRefreshView] ValidationError: {'refresh': [ErrorDetail(string='This field may not be blank.', code='blank')]}
+[2025-08-27 23:26:15,369] ERROR in exceptions: [TokenBlacklistView] MethodNotAllowed: {'detail': ErrorDetail(string='Method "GET" not allowed.', code='method_not_allowed')}
+[2025-08-27 23:26:26,107] ERROR in exceptions: [TokenBlacklistView] ValidationError: {'refresh': [ErrorDetail(string='This field may not be blank.', code='blank')]}
+[2025-08-27 23:26:52,678] ERROR in exceptions: [TokenObtainPairView] MethodNotAllowed: {'detail': ErrorDetail(string='Method "GET" not allowed.', code='method_not_allowed')}
+[2025-08-27 23:27:16,102] ERROR in exceptions: [APIRootView] NotAuthenticated: {'detail': ErrorDetail(string='Authentication credentials were not provided.', code='not_authenticated')}
+[2025-08-27 23:27:52,019] ERROR in exceptions: [TokenObtainPairView] MethodNotAllowed: {'detail': ErrorDetail(string='Method "GET" not allowed.', code='method_not_allowed')}
+[2025-08-27 23:28:03,995] ERROR in exceptions: [TokenObtainPairView] ValidationError: {'username': [ErrorDetail(string='This field is required.', code='required')], 'password': [ErrorDetail(string='This field is required.', code='required')]}
+[2025-08-27 23:28:40,389] ERROR in exceptions: [APIRootView] NotAuthenticated: {'detail': ErrorDetail(string='Authentication credentials were not provided.', code='not_authenticated')}
+[2025-08-27 23:29:36,981] ERROR in exceptions: [APIRootView] NotAuthenticated: {'detail': ErrorDetail(string='Authentication credentials were not provided.', code='not_authenticated')}
+[2025-08-27 23:29:46,001] ERROR in exceptions: [APIRootView] NotAuthenticated: {'detail': ErrorDetail(string='Authentication credentials were not provided.', code='not_authenticated')}
+[2025-08-27 23:37:52,949] ERROR in exceptions: [APIRootView] NotAuthenticated: {'detail': ErrorDetail(string='Authentication credentials were not provided.', code='not_authenticated')}
