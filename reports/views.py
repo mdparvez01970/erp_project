@@ -8,6 +8,8 @@ import io
 import xlsxwriter
 from reportlab.pdfgen import canvas
 from django_filters.rest_framework import DjangoFilterBackend
+from .export import export_to_excel, export_to_pdf
+from .charts import generate_report_chart
 
 class ReportViewSet(viewsets.ModelViewSet):
     queryset = Report.objects.all()
@@ -19,6 +21,19 @@ class ReportViewSet(viewsets.ModelViewSet):
     search_fields = ['name']
     ordering_fields = ['id', 'generated_at']
     filterset_fields = ['generated_at']
+    
+    @action(detail=False, methods=['get'])
+    def export_excel(self, request):
+        return export_to_excel(self.get_queryset())
+
+    @action(detail=False, methods=['get'])
+    def export_pdf(self, request):
+        return export_to_pdf(self.get_queryset())
+
+    @action(detail=False, methods=['get'])
+    def chart(self, request):
+        chart_html = generate_report_chart(self.get_queryset())
+        return Response({"chart_html": chart_html})
     
     def create(self, request, *args, **kwargs):
         try:

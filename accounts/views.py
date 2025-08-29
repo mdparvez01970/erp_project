@@ -11,6 +11,7 @@ from .serializers import RegisterSerializer
 from django.db.models import Sum
 from rest_framework.decorators import action
 from .utils import get_account_report
+from .utils import log_activity
 
 # Sign Up
 class RegisterView(generics.CreateAPIView):
@@ -75,11 +76,42 @@ class AccountHeadViewSet(viewsets.ModelViewSet):
     ordering_fields = ['id', 'code', 'name']
     filterset_fields = ['type']
     
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        log_activity(
+            user=self.request.user,
+            action="create",
+            model_name="User",
+            object_id=instance.id,
+            changes=str(serializer.validated_data)
+        )
+    
     def create(self, request, *args, **kwargs):
         try:
             return super().create(request, *args, **kwargs)
         except Exception as e:
             return Response({"success": False, "error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        log_activity(
+            user=self.request.user,
+            action="update",
+            model_name="User",
+            object_id=instance.id,
+            changes=str(serializer.validated_data)
+        )
+        
+    def perform_destroy(self, instance):
+        object_id = instance.id
+        instance.delete()
+        log_activity(
+            user=self.request.user,
+            action="delete",
+            model_name="User",
+            object_id=object_id,
+            changes=None
+        )
         
     @action(detail=False, methods=['get'])
     def report(self, request):
@@ -108,6 +140,16 @@ class GeneralLedgerViewSet(viewsets.ModelViewSet):
     ordering_fields = ['id', 'date', 'debit', 'credit']
     filterset_fields = ['date', 'account', 'account__type']
     
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        log_activity(
+            user=self.request.user,
+            action="create",
+            model_name="GeneralLedger",
+            object_id=instance.id,
+            changes=str(serializer.validated_data)
+        )
+    
     def create(self, request, *args, **kwargs):
         try:
             return super().create(request, *args, **kwargs)
@@ -116,6 +158,27 @@ class GeneralLedgerViewSet(viewsets.ModelViewSet):
                 "success": False,
                 "error": str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
+            
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        log_activity(
+            user=self.request.user,
+            action="update",
+            model_name="GeneralLedger",
+            object_id=instance.id,
+            changes=str(serializer.validated_data)
+        )
+
+    def perform_destroy(self, instance):
+        object_id = instance.id
+        instance.delete()
+        log_activity(
+            user=self.request.user,
+            action="delete",
+            model_name="GeneralLedger",
+            object_id=object_id,
+            changes=None
+        )
             
     @action(detail=False, methods=['get'])
     def report(self, request):

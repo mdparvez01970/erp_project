@@ -1,6 +1,19 @@
 from django.core.cache import cache
-from .models import AccountHead, GeneralLedger
+from .models import AccountHead, GeneralLedger, ActivityLog
 from django.db.models import Sum
+from django.utils.timezone import now
+from activity.models import ActivityLog
+
+
+def log_activity(user, action, model_name, object_id=None, changes=None):
+    ActivityLog.objects.create(
+        user=user,
+        action=action,
+        model_name=model_name,
+        object_id=object_id,
+        changes=changes,
+        timestamp=now()
+    )
 
 def get_account_report():
     cache_key = "account_report"

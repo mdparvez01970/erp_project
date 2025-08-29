@@ -1,5 +1,22 @@
 from django.db import models
+from django.conf import settings
+from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
+
+from django.db import models
+from django.conf import settings
+
+class ActivityLog(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="accounts_activity_logs")
+    action = models.CharField(max_length=100)
+    model_name = models.CharField(max_length=100)
+    object_id = models.PositiveIntegerField(null=True, blank=True)
+    changes = models.TextField(null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} - {self.action} - {self.model_name}"
+
 
 class User(AbstractUser):
     ROLE_CHOICES = (
@@ -36,7 +53,7 @@ class GeneralLedger(models.Model):
     credit = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     description = models.TextField(blank=True, null=True)
     
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     
     class Meta:
         indexes = [

@@ -15,7 +15,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path, include
+from accounts.views import RegisterView, LogoutView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -26,12 +29,15 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # JWT Auth
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('signup/', RegisterView.as_view(), name='signup'),
+    path('signin/', TokenObtainPairView.as_view(), name='signin'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/logout/', TokenBlacklistView.as_view(), name='token_blacklist'),
+    path('logout/', LogoutView.as_view(), name='logout'),
 
     # Apps URLs
     path('api/accounts/', include('accounts.urls')),
+    path('api/users/', include('users.urls')),
     path('api/assets/', include('assets.urls')),
     path('api/bank/', include('bank.urls')),
     path('api/budget/', include('budget.urls')),
@@ -45,8 +51,18 @@ urlpatterns = [
     path('api/receivable/', include('receivable.urls')),
     path('api/reports/', include('reports.urls')),
     path('api/tax/', include('tax.urls')),
-    path('api/users/', include('users.urls')),
+    path("api/files/", include("files.urls")),
+    path("api/notifications/", include("notifications.urls")),
+    path("api/chat/", include("chat.urls")),
+    path('api/workflow/', include('workflow.urls')),
+    path('api/activity/', include('activity.urls')),
+
+
     
     
 ]
 
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
